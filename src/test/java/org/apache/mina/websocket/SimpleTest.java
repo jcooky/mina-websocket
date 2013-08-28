@@ -4,7 +4,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.http.HttpServerCodec;
 import org.apache.mina.http.api.HttpRequest;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
