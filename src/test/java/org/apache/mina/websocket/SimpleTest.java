@@ -1,20 +1,24 @@
 package org.apache.mina.websocket;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.http.HttpServerCodec;
-import org.apache.mina.http.api.HttpRequest;
+import org.apache.mina.http.api.*;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.junit.Before;
 import org.junit.Test;
-import org.jwebsocket.api.WebSocketClient;
-import org.jwebsocket.client.token.BaseTokenClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +36,11 @@ public class SimpleTest {
 			HttpRequest request = (HttpRequest)message;
 
 			System.out.println(request.toString());
+
+			HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1,
+					HttpStatus.CLIENT_ERROR_NOT_FOUND,
+					Collections.EMPTY_MAP);
+			session.write(response);
 		}
 
 		@Override
@@ -65,7 +74,7 @@ public class SimpleTest {
 	}
 
 	@Test
-	public void testMe() throws Exception {
+	public void testHttp() throws Exception {
 		logger.debug("start");
 
 		NioSocketAcceptor server = new NioSocketAcceptor();
@@ -74,11 +83,11 @@ public class SimpleTest {
 		server.setReuseAddress(true);
 		server.getSessionConfig().setReadBufferSize(2048);
 		server.getFilterChain().addLast("http", new HttpServerCodec());
-		server.bind(new InetSocketAddress(11025));
+		server.bind(new InetSocketAddress(11024));
 
-		WebSocketClient client = new BaseTokenClient();
-		client.open("ws://127.0.0.1:11025/");
-
-		client.close();
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpGet httpget = new HttpGet("http://localhost:11024/");
+		org.apache.http.HttpResponse response = httpclient.execute(httpget);
+		assertEquals(404, response.getStatusLine().getStatusCode());
 	}
 }
