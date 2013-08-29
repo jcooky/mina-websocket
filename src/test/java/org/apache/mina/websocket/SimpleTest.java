@@ -12,6 +12,7 @@ import org.apache.mina.http.api.*;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.junit.Before;
 import org.junit.Test;
+import org.jwebsocket.client.cgi.CGIClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class SimpleTest {
 		public void messageReceived(IoSession session, Object message) {
 			HttpRequest request = (HttpRequest)message;
 
-			System.out.println(request.toString());
+
 
 			HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1,
 					HttpStatus.CLIENT_ERROR_NOT_FOUND,
@@ -75,8 +76,6 @@ public class SimpleTest {
 
 	@Test
 	public void testHttp() throws Exception {
-		logger.debug("start");
-
 		NioSocketAcceptor server = new NioSocketAcceptor();
 
 		server.setHandler(new handler());
@@ -88,6 +87,20 @@ public class SimpleTest {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget = new HttpGet("http://localhost:11024/");
 		org.apache.http.HttpResponse response = httpclient.execute(httpget);
+
 		assertEquals(404, response.getStatusLine().getStatusCode());
+	}
+
+	@Test
+	public void testWebSocket() throws Exception {
+		NioSocketAcceptor server = new NioSocketAcceptor();
+
+		server.setHandler(new handler());
+		server.setReuseAddress(true);
+		server.getSessionConfig().setReadBufferSize(2048);
+		server.getFilterChain().addLast("http", new HttpServerCodec());
+		server.bind(new InetSocketAddress(11024));
+
+		CGIClient client = new CGIClient();
 	}
 }
