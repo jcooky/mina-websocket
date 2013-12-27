@@ -1,6 +1,6 @@
 package com.github.jcooky.troll.test;
 
-import com.github.jcooky.troll.tomcat.MinaProtocolHandler;
+import com.github.jcooky.troll.tomcat.MinaProtocol;
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
@@ -30,7 +30,7 @@ public class Server {
 		tomcat.setPort(Integer.valueOf(webPort));
 		tomcat.enableNaming();
 
-		Connector connector = new Connector(MinaProtocolHandler.class.getName());
+		Connector connector = new Connector(MinaProtocol.class.getName());
 		connector.setPort(8090);
 		tomcat.getService().addConnector(connector);
 

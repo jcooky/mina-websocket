@@ -4,19 +4,22 @@ import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.Adapter;
 import org.apache.coyote.ProtocolHandler;
 import org.apache.coyote.http11.Http11NioProtocol;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.apache.mina.api.IoSession;
+import org.apache.tomcat.util.net.*;
 
+import javax.net.ssl.SSLEngine;
+import java.net.Socket;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dennis
- * Date: 13. 12. 6
- * Time: 오후 2:35
- * To change this template use File | Settings | File Templates.
- */
-public class MinaProtocolHandler implements ProtocolHandler {
+public class MinaProtocol implements ProtocolHandler {
+	private static final Log log = LogFactory.getLog(MinaProtocol.class);
+
 	private Adapter adapter;
+	private Executor executor = Executors.newScheduledThreadPool(5);
 
 	@Override
 	public void setAdapter(Adapter adapter) {
@@ -25,12 +28,12 @@ public class MinaProtocolHandler implements ProtocolHandler {
 
 	@Override
 	public Adapter getAdapter() {
-		return this.adapter;
+		return adapter;
 	}
 
 	@Override
 	public Executor getExecutor() {
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
+		return executor;
 	}
 
 	@Override
@@ -40,7 +43,7 @@ public class MinaProtocolHandler implements ProtocolHandler {
 
 	@Override
 	public void start() throws Exception {
-		//To change body of implemented methods use File | Settings | File Templates.
+
 	}
 
 	@Override
